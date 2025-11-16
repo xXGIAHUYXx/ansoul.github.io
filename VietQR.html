@@ -198,7 +198,7 @@
 
         <div>
           <label>Số điện thoại</label>
-          <input id="phone" type="text" placeholder="Số điện thoại" required>
+          <input id="phone" type="text" placeholder="Số điện thoại" maxlength="10" inputmode="tel" pattern="\d{10}" required>
         </div>
 
         <div class="full">
@@ -253,7 +253,7 @@
       return;
     }
 
-    if (!product || !price){
+    if (!product || !price || price <= 0){
       alert("URL không hợp lệ");
       return;
     }
@@ -261,8 +261,16 @@
     const phone = document.getElementById("phone").value.trim();
     const name = document.getElementById("name").value.trim();
     const addr = document.getElementById("address").value.trim();
+    
     if (!name || !addr || !phone){
       alert("Vui lòng nhập đầy đủ thông tin khách hàng.");
+      return;
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("Số điện thoại không hợp lệ. Vui lòng nhập chính xác 10 chữ số.");
+      document.getElementById("phone").focus(); // Trỏ vào ô điện thoại
       return;
     }
 
@@ -274,7 +282,7 @@
 
     // tạo URL QR VietQR
     const qrUrl =
-      `https://img.vietqr.io/image/ACB-39527607-print.png?amount=${amount}&addInfo=${productEncoded}&accountName=vuong%20gia%20huy`;
+      `https://img.vietqr.io/image/ACB-39527607-print.png?amount=${amount}&addInfo=${qty}%20${productEncoded}&accountName=vuong%20gia%20huy`;
 
     qrImage.src = qrUrl;
     qrInfo.textContent = `Sản phẩm: ${product} | Số lượng: ${qty} | Thành tiền: ${formatVND(amount)}`;
