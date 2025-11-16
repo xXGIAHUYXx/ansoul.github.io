@@ -183,7 +183,7 @@
 
         <div>
           <label>Số lượng</label>
-          <input id="qty" type="number" min="1" value="1" required>
+          <input id="qty" type="number" min="1" value="1" step="1" required>
         </div>
 
         <div class="full">
@@ -247,14 +247,21 @@
     const qty = Number(document.getElementById("qty").value);
     const price = Number(document.getElementById("price").value);
 
-    if (!product || qty < 1 || price < 1){
-      alert("Vui lòng nhập đầy đủ thông tin sản phẩm.");
+    if (qty < 1 || !Number.isInteger(qty)) {
+      alert("Số lượng phải là một số nguyên dương (ví dụ: 1, 2, 3...).");
+      document.getElementById("qty").focus();
       return;
     }
 
+    if (!product || !price){
+      alert("URL không hợp lệ");
+      return;
+    }
+
+    const phone = document.getElementById("phone").value.trim();
     const name = document.getElementById("name").value.trim();
     const addr = document.getElementById("address").value.trim();
-    if (!name || !addr){
+    if (!name || !addr || !phone){
       alert("Vui lòng nhập đầy đủ thông tin khách hàng.");
       return;
     }
@@ -270,7 +277,7 @@
       `https://img.vietqr.io/image/ACB-39527607-print.png?amount=${amount}&addInfo=${productEncoded}&accountName=vuong%20gia%20huy`;
 
     qrImage.src = qrUrl;
-    qrInfo.textContent = `Sản phẩm: ${product} | SL: ${qty} | Thành tiền: ${formatVND(amount)}`;
+    qrInfo.textContent = `Sản phẩm: ${product} | Số lượng: ${qty} | Thành tiền: ${formatVND(amount)}`;
 
     overlay.classList.add("open");
   });
@@ -283,8 +290,16 @@
     if (e.target === overlay) overlay.classList.remove("open");
   });
 
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    document.getElementById("orderForm").reset();
+    document.getElementById("clearBtn").addEventListener("click", () => {
+    // Xóa thông tin khách hàng
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("address").value = "";
+
+    // Đặt lại số lượng về giá trị mặc định là 1
+    document.getElementById("qty").value = "1";
+    
+    // Các trường "product" và "price" sẽ không bị ảnh hưởng
   });
 
   window.onload = function() {
@@ -293,17 +308,13 @@
     const price = params.get("price");
 
   if (product) {
-    // Sửa "productName" thành "product"
     document.getElementById("product").value = decodeURIComponent(product); 
   }
 
   if (price) {
-    // Sửa "amount" thành "price"
     document.getElementById("price").value = price;
   }
 };
-  
 </script>
-
 </body>
 </html>
